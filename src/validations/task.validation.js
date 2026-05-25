@@ -6,14 +6,12 @@ const createTaskSchema = z.object({
     .trim()
     .min(3, "Vazifa sarlavhasi kamida 3 ta belgidan iborat bo'lsin")
     .max(100, "Sarlavha 100 ta belgidan oshmasligi kerak"),
-
   description: z
     .string()
     .trim()
     .max(500, "Tavsif juda uzun (maksimal 500 ta belgi)")
     .optional()
     .or(z.literal("")),
-
   status: z
     .enum(["TODO", "IN_PROGRESS", "DONE"], {
       errorMap: () => ({
@@ -22,7 +20,6 @@ const createTaskSchema = z.object({
       }),
     })
     .default("TODO"),
-
   priority: z
     .enum(["LOW", "MEDIUM", "HIGH"], {
       errorMap: () => ({
@@ -30,19 +27,26 @@ const createTaskSchema = z.object({
       }),
     })
     .default("MEDIUM"),
-
   dueDate: z
     .string()
-    .datetime({ message: "Noto'g'ri sana formati (string bo'lishi kerak)" })
     .optional()
     .nullable()
-    // .refine(
-      // (dateStr) => {
-        // if (!dateStr) return true;
-        // return new Date(dateStr) >= new Date(new Date().setHours(0, 0, 0, 0));
-      // },
-      // { message: "Bajarilish muddati o'tib ketgan sana bo'lishi mumkin emas" }
-    // ),
+    .refine(
+      (dateStr) => {
+        if (!dateStr) return true;
+        const parsedDate = new Date(dateStr);
+        if (isNaN(parsedDate.getTime())) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const inputDate = new Date(parsedDate);
+        inputDate.setHours(0, 0, 0, 0);
+
+        return inputDate >= today;
+      },
+      { message: "Bajarilish muddati o'tib ketgan sana bo'lishi mumkin emas" }
+    ),
 });
 
 const updateTaskSchema = createTaskSchema.partial();
