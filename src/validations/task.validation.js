@@ -36,13 +36,13 @@ const createTaskSchema = z.object({
     .datetime({ message: "Noto'g'ri sana formati (string bo'lishi kerak)" })
     .optional()
     .nullable()
-    .refine(
-      (dateStr) => {
-        if (!dateStr) return true;
-        return new Date(dateStr) >= new Date(new Date().setHours(0, 0, 0, 0));
-      },
-      { message: "Bajarilish muddati o'tib ketgan sana bo'lishi mumkin emas" }
-    ),
+    // .refine(
+      // (dateStr) => {
+        // if (!dateStr) return true;
+        // return new Date(dateStr) >= new Date(new Date().setHours(0, 0, 0, 0));
+      // },
+      // { message: "Bajarilish muddati o'tib ketgan sana bo'lishi mumkin emas" }
+    // ),
 });
 
 const updateTaskSchema = createTaskSchema.partial();
